@@ -3,6 +3,7 @@
 <style> circle {fill: lightblue; stroke: black;} </style>
 <body onload='init()'>
 <div>
+<input type="button" value="Previous page" onclick="location.href='index.html'"/>
 <input type="button" value="Next page" onclick="location.href='page3.html'"/>
 </form>
 </div>
@@ -33,12 +34,12 @@ d3.select("svg")
 d3.select("svg")
 .append("g")
 .attr("transform","translate("+250+","+20+")")
-.call(d3.axisLeft(y).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+.call(d3.axisLeft(y).tickValues([10,20,50,100,150]).tickFormat(d3.format("~s")));
 
 d3.select("svg")
 .append("g")
 .attr("transform","translate("+250+","+520+")")
-.call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")))
+.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("~s")))
 
 d3.select("svg")
 .attr("width", 500+6*50)
