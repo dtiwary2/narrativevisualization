@@ -37,8 +37,6 @@ d3.select("svg")
 .attr("cy",function(d) { return 200-x( Number(d.AverageHighwayMPG)); })
 .attr("r", function(d) { return 2+ Number(d.EngineCylinders) });
 
-d3.select(id).html = ""
-
 d3.select("svg")
 .attr("width", 200+2*50)
 .attr("height", 200+2*50)
@@ -62,6 +60,11 @@ d3.select("svg")
 .attr("transform","translate("+50+","+250+")")
 .call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")))
 }
+
+
+d3.select("svg").html = ""
+
+
 </script>
 
 <div>
