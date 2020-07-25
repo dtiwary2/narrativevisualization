@@ -2,10 +2,7 @@
 <script src='https://d3js.org/d3.v5.min.js'></script>
 <style> circle {fill: lightblue; stroke: black;} </style>
 <body onload='init()'>
-<div>
-<input type="button" value="Next page" onclick="location.href='page3.html'"/>
-</form>
-</div>
+<h1>Explore the world</h1>
 <svg width=600 height=600>
 </svg>
 <script>
@@ -50,6 +47,22 @@ d3.select("svg")
 .filter(function(d) { return d.Fuel == "Diesel" })
 .style("fill", "none")
 .style("stroke","yellow")
+.style("stroke-width","2")
+.attr("cx",function(d,i) { return x(d.AverageCityMPG) })
+.attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
+.attr("r", function(d) { return 5+ Number(d.EngineCylinders) });
+
+
+d3.select("svg")
+.attr("width", 500+6*50)
+.attr("height", 500+3*50)
+.append("g")
+.attr("transform","translate("+250+","+20+")")
+.selectAll("circle").data(data)
+.enter().append("circle")
+.filter(function(d) { return d.Fuel == "Electricity" })
+.style("fill", "none")
+.style("stroke","green")
 .style("stroke-width","2")
 .attr("cx",function(d,i) { return x(d.AverageCityMPG) })
 .attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
