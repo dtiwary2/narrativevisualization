@@ -18,7 +18,7 @@ d3.select("svg")
 .attr("transform","translate("+250+","+20+")")
 .selectAll("circle").data(data)
 .enter().append("circle")
-.filter(function(d) { return d.Fuel in ["Gasoline","Diesel"] })
+.filter(function(d) { return d.Fuel == "Gasoline" })
 .style("fill", "none")
 .style("stroke","blue")
 .style("stroke-width","2")
@@ -35,6 +35,8 @@ d3.select("svg")
 .append("g")
 .attr("transform","translate("+250+","+520+")")
 .call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")))
+
+d3.select("svg").html=""
 
 /*
 d3.select("svg")
