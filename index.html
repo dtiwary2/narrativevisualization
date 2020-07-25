@@ -27,6 +27,18 @@ d3.select("svg")
 .attr("r", function(d) { return 2+ Number(d.EngineCylinders) });
 
 d3.select("svg")
+.append("g")
+.attr("transform","translate("+50+","+50+")")
+.call(d3.axisLeft(y).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate("+50+","+250+")")
+.call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")))
+}
+
+
+d3.select("svg")
 .attr("width", 200+2*500)
 .attr("height", 200+2*500)
 .append("g")
@@ -40,6 +52,18 @@ d3.select("svg")
 .attr("cx",function(d,i) { return x(d.AverageCityMPG) })
 .attr("cy",function(d) { return 200-x( Number(d.AverageHighwayMPG)); })
 .attr("r", function(d) { return 2+ Number(d.EngineCylinders) });
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate("+500+","+50+")")
+.call(d3.axisLeft(y).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate("+500+","+750+")")
+.call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")))
+}
+
 
 d3.select("svg")
 .attr("width", 200+2*500)
@@ -56,16 +80,6 @@ d3.select("svg")
 .attr("cy",function(d) { return 200-x( Number(d.AverageHighwayMPG)); })
 .attr("r", function(d) { return 2+ Number(d.EngineCylinders) });
 
-d3.select("svg")
-.append("g")
-.attr("transform","translate("+50+","+50+")")
-.call(d3.axisLeft(y).tickValues([10,20,50,100]).tickFormat(d3.format("~s")));
-
-d3.select("svg")
-.append("g")
-.attr("transform","translate("+50+","+250+")")
-.call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")))
-}
 
 
 </script>
