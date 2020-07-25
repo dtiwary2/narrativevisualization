@@ -36,6 +36,20 @@ d3.select("svg")
 .attr("transform","translate("+250+","+520+")")
 .call(d3.axisBottom(x).tickValues([10,20,50,100]).tickFormat(d3.format("~s")))
 
+d3.select("svg")
+.attr("width", 500+6*50)
+.attr("height", 500+3*50)
+.append("g")
+.attr("transform","translate("+250+","+20+")")
+.selectAll("circle").data(data)
+.enter().append("circle")
+.filter(function(d) { return d.Fuel == "Diesel" })
+.style("fill", "none")
+.style("stroke","yellow")
+.style("stroke-width","2")
+.attr("cx",function(d,i) { return x(d.AverageCityMPG) })
+.attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
+.attr("r", function(d) { return 5+ Number(d.EngineCylinders) });
 
 /*
 d3.select("svg")
@@ -95,7 +109,7 @@ d3.select("svg")
 </script>
 
 <div>
-<input type="button" value="Next page" onclick="location.href='page2.html'"/>
+<input type="button" value="Next page" onclick="location.href='page3.html'"/>
 </form>
 </div>
 </body>
