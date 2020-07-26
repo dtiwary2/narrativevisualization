@@ -1,6 +1,6 @@
 <html>
 
-<script src='https://d3js.org/d3.v5.min.js'></script>
+<script src='https://d3js.org/d3.v5.js'></script>
 <style> circle {fill: lightblue; stroke: black;} </style>
 
 <body onload='init()' >
@@ -34,15 +34,33 @@ d3.select("svg")
 .attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
 .attr("r", function(d) { return 5+ Number(d.EngineCylinders) });
 
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate("+200+","+250+")")
+.append("text")
+.attr("transform", "rotate(-90)")
+.style("text-anchor", "middle")
+    .text("Hwy Mileage");
+	
 d3.select("svg")
 .append("g")
 .attr("transform","translate("+250+","+20+")")
-.call(d3.axisLeft(y).tickValues([10,20,50,100,150]).tickFormat(d3.format("~s")));
+.call(d3.axisLeft(y).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
+;
+
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate("+450+","+560+")")
+.append("text")
+.style("text-anchor", "middle")
+    .text("City Mileage");
 
 d3.select("svg")
 .append("g")
 .attr("transform","translate("+250+","+520+")")
-.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("~s")))
+.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
 
 }
 

@@ -51,14 +51,31 @@ d3.csv("https://flunky.github.io/cars2017.csv", function(data)
 	var y = d3.scaleLog().domain([10,150]).range([500,0]).base(10)
 
 	d3.select("svg")
-		.append("g")
-		.attr("transform","translate("+250+","+20+")")
-		.call(d3.axisLeft(y).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")));
+	.append("g")
+	.attr("transform","translate("+200+","+250+")")
+	.append("text")
+	.attr("transform", "rotate(-90)")
+	.style("text-anchor", "middle")
+		.text("Hwy Mileage");
+		
+	d3.select("svg")
+	.append("g")
+	.attr("transform","translate("+250+","+20+")")
+	.call(d3.axisLeft(y).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
+	;
+
 
 	d3.select("svg")
-		.append("g")
-		.attr("transform","translate("+250+","+520+")")
-		.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
+	.append("g")
+	.attr("transform","translate("+450+","+560+")")
+	.append("text")
+	.style("text-anchor", "middle")
+		.text("City Mileage");
+
+	d3.select("svg")
+	.append("g")
+	.attr("transform","translate("+250+","+520+")")
+	.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
 
 	var graph=
 		svg
