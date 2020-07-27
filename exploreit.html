@@ -1,7 +1,24 @@
 <html>
 <script src='https://d3js.org/d3.v4.js'></script>
-<style> circle {fill: lightblue; stroke: black;} </style>
+<style> 
+circle {fill: lightblue; stroke: black;} 
+
+div.tooltip {	
+    position: absolute;			
+    text-align: center;			
+    width: 60px;					
+    height: 28px;					
+    padding: 2px;				
+    font: 12px sans-serif;		
+    background: lightsteelblue;	
+    border: 0px;		
+    border-radius: 8px;			
+    pointer-events: none;			
+}
+
+</style>
 <!-- body onload='init()' -->
+<!--credits to https://itnext.io/one-approach-to-filtering-a-d3-interactive-dashboard-f63e0244f77d -->
 
 <!-- Initialize a select button -->
 <div>
@@ -17,11 +34,17 @@
 </svg>
 <script>
 
+// Define the div for the tooltip
+var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+	
 var svg=d3.select("svg")
-	.attr("width", 500+6*50)
+	.attr("width", 700+6*50)
 	.attr("height", 500+3*50)
 	.append("g")
 	.attr("transform","translate("+250+","+20+")")
+
 
 //async function init() {
 d3.csv("https://flunky.github.io/cars2017.csv", function(data)
@@ -50,13 +73,135 @@ d3.csv("https://flunky.github.io/cars2017.csv", function(data)
 	var x = d3.scaleLog().domain([10,150]).range([0,500]).base(10)
 	var y = d3.scaleLog().domain([10,150]).range([500,0]).base(10)
 
+    
+	
+	//Axis Y and label	
 	d3.select("svg")
 	.append("g")
 	.attr("transform","translate("+200+","+250+")")
 	.append("text")
 	.attr("transform", "rotate(-90)")
 	.style("text-anchor", "middle")
-		.text("Hwy Mileage");
+		.text("Hwy MPG");
+		
+	d3.select("svg")
+	.append("g")
+	.attr("transform","translate("+250+","+20+")")
+	.call(d3.axisLeft(y).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
+	;
+
+    //Axis X and label
+	d3.select("svg")
+	.append("g")
+	.attr("transform","translate("+450+","+560+")")
+	.append("text")
+	.style("text-anchor", "middle")
+		.text("City MPG");
+
+	d3.select("svg")
+	.append("g")
+	.attr("transform","translate("+250+","+520+")")
+	.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
+
+
+	var graph=
+		svg
+		.append('g')
+		.selectAll("circle").data(data)
+		.enter()
+		.append("circle")
+
+	graph
+		.filter(function(d){return (d.Fuel==FuelType[0] && d.Make==Make[0]) })
+		.style("fill", "none")
+		.style("stroke",function(d) { if (d.Fuel == "Gasoline") return "blue"
+									  else if (d.Fuel == "Diesel") return "orange" 
+									  else if (d.Fuel == "Electricity") return "green" })
+		.style("stroke-width","2")
+		.attr("cx",function(d,i) { return x(d.AverageCityMPG) })
+		.attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
+		.attr("r", function(d) { return 5+ Number(d.EngineCylinders) })
+		.on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div.html(d.Fuel + "<br/>"  + d.EngineCylinders)	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);
+		})
+		
+	
+	//Annotation
+	var CityMPG=data.map( function(d){if (d.Fuel == "Gasoline" && d.Make == "Acura") return Number(d.AverageCityMPG)})
+		var HwyMPG=data.map( function(d){if (d.Fuel == "Gasoline" && d.Make == "Acura") return Number(d.AverageHighwayMPG)})
+
+		var MinCityMPG=d3.min(CityMPG);
+		var MinHwyMPG=d3.min(HwyMPG);
+
+		var MaxCityMPG=d3.max(CityMPG);
+		var MaxHwyMPG=d3.max(HwyMPG);
+			
+	d3.select("svg")
+.append("g")
+.attr("transform","translate("+740+","+20+")")
+    .selectAll("rect")
+    .data(data)
+    .enter()
+    .append('text')
+    .text("Min Average City MPG: "+MinCityMPG);
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate("+740+","+40+")")
+    .selectAll("rect")
+    .data(data)
+    .enter()
+    .append('text')
+    .text("Max Average City MPG: "+MaxCityMPG);	
+	
+	d3.select("svg")
+.append("g")
+.attr("transform","translate("+740+","+80+")")
+    .selectAll("rect")
+    .data(data)
+    .enter()
+    .append('text')
+    .text("Min Average Highway MPG: "+MinHwyMPG);
+
+
+d3.select("svg")
+.append("g")
+.attr("transform","translate("+740+","+100+")")
+    .selectAll("rect")
+    .data(data)
+    .enter()
+    .append('text')
+    .text("Max Average Highway MPG: "+MaxHwyMPG);
+			
+			
+			
+		
+	// A function that update the chart
+	function update(FuelFilter,MakeFilter) {
+
+		  // Create new data with the selection?
+		  //var dataFilter = data.filter(function(d){return d.Fuel==selectedGroup})
+
+		  // Give these new data to update line
+		d3.selectAll("g > *").remove();
+		
+		d3.select("svg")
+	.append("g")
+	.attr("transform","translate("+200+","+250+")")
+	.append("text")
+	.attr("transform", "rotate(-90)")
+	.style("text-anchor", "middle")
+		.text("Hwy MPG");
 		
 	d3.select("svg")
 	.append("g")
@@ -70,71 +215,101 @@ d3.csv("https://flunky.github.io/cars2017.csv", function(data)
 	.attr("transform","translate("+450+","+560+")")
 	.append("text")
 	.style("text-anchor", "middle")
-		.text("City Mileage");
+		.text("City MPG");
 
 	d3.select("svg")
 	.append("g")
 	.attr("transform","translate("+250+","+520+")")
 	.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
-
-	var graph=
-		svg
-		.append('g')
-		.selectAll("circle").data(data)
-		.enter()
-		.append("circle")
-
-	graph
-		.filter(function(d){return (d.Fuel==FuelType[0] && d.Make==Make[0]) })
-		.style("fill", "none")
-		.style("stroke",function(d) { if (d.Fuel == "Gasoline") return "blue"
-									  else if (d.Fuel == "Diesel") return "yellow" 
-									  else if (d.Fuel == "Electricity") return "green" })
-		.style("stroke-width","2")
-		.attr("cx",function(d,i) { return x(d.AverageCityMPG) })
-		.attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
-		.attr("r", function(d) { return 5+ Number(d.EngineCylinders) });
-
-
-	// A function that update the chart
-	function update(FuelFilter,MakeFilter) {
-
-		  // Create new data with the selection?
-		  //var dataFilter = data.filter(function(d){return d.Fuel==selectedGroup})
-
-		  // Give these new data to update line
-		d3.selectAll("g > *").remove();
-		var graph=
-		svg
-		.append('g')
-		.selectAll("circle").data(data)
-		.enter()
-		.append("circle")
-
-		graph
-		.filter(function(d) { return (d.Fuel == FuelFilter && d.Make == MakeFilter) })
-				  .transition()
-				  .duration(1000)
-		.style("fill", "none")
-		.style("stroke",function(d) { if (d.Fuel == "Gasoline") return "blue"
-									  else if (d.Fuel == "Diesel") return "yellow" 
-									  else if (d.Fuel == "Electricity") return "green" })
-		.style("stroke-width","2")
-		.attr("cx",function(d,i) { return x(d.AverageCityMPG) })
-		.attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
-		.attr("r", function(d) { return 5+ Number(d.EngineCylinders) });
 		
+		var CityMPG=data.map( function(d){if (d.Fuel == FuelFilter && d.Make == MakeFilter) return Number(d.AverageCityMPG)})
+		var HwyMPG=data.map( function(d){if (d.Fuel == FuelFilter && d.Make == MakeFilter) return Number(d.AverageHighwayMPG)})
+
+		var MinCityMPG=d3.min(CityMPG);
+		var MinHwyMPG=d3.min(HwyMPG);
+
+		var MaxCityMPG=d3.max(CityMPG);
+		var MaxHwyMPG=d3.max(HwyMPG);
+			
+			
+			
 		d3.select("svg")
 		.append("g")
-		.attr("transform","translate("+250+","+20+")")
-		.call(d3.axisLeft(y).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")));
+		.attr("transform","translate("+740+","+20+")")
+			.selectAll("rect")
+			.data(data)
+			.enter()
+			.append('text')
+			.text("Min Average City MPG: "+MinCityMPG);
+
 
 		d3.select("svg")
 		.append("g")
-		.attr("transform","translate("+250+","+520+")")
-		.call(d3.axisBottom(x).tickValues([10,20,50,100,150]).tickFormat(d3.format("2")))
-			  
-	}
+		.attr("transform","translate("+740+","+40+")")
+			.selectAll("rect")
+			.data(data)
+			.enter()
+			.append('text')
+			.text("Max Average City MPG: "+MaxCityMPG);
+
+			
+		d3.select("svg")
+		.append("g")
+		.attr("transform","translate("+740+","+80+")")
+			.selectAll("rect")
+			.data(data)
+			.enter()
+			.append('text')
+			.text("Min Average Highway MPG: "+MinHwyMPG);
+
+
+		d3.select("svg")
+		.append("g")
+		.attr("transform","translate("+740+","+100+")")
+			.selectAll("rect")
+			.data(data)
+			.enter()
+			.append('text')
+			.text("Max Average Highway MPG: "+MaxHwyMPG);
+			
+		// Define the div for the tooltip
+	var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+		
+		svg
+		.append('g')
+		.selectAll("circle").data(data)
+		.enter()
+		.append("circle")
+		.filter(function(d) { return (d.Fuel == FuelFilter && d.Make == MakeFilter) })
+		.style("fill", "none")
+		.style("stroke",function(d) { if (d.Fuel == "Gasoline") return "blue"
+									  else if (d.Fuel == "Diesel") return "orange" 
+									  else if (d.Fuel == "Electricity") return "green" })
+		.style("stroke-width","2")
+		.attr("cx",function(d,i) { return x(d.AverageCityMPG) })
+		.attr("cy",function(d) { return 500-x( Number(d.AverageHighwayMPG)); })
+		.attr("r", function(d) { return 5+ Number(d.EngineCylinders) })
+		.on("mouseover", function(d) {		
+            div.transition()		
+                .duration(200)		
+                .style("opacity", .9);		
+            div.html(d.Fuel + "<br/>"  + d.EngineCylinders)	
+                .style("left", (d3.event.pageX) + "px")		
+                .style("top", (d3.event.pageY - 28) + "px");	
+            })					
+        .on("mouseout", function(d) {		
+            div.transition()		
+                .duration(500)		
+                .style("opacity", 0);
+		});
+		
+		
+				
+							  
+	}//update function ends
+			
 
     // When the button is changed, run the updateChart function
     d3.select("#selectButtonFuel").on("change", function(d) {
