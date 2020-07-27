@@ -1,23 +1,12 @@
 <html>
+<title>MPG for cars-2017</title>
+
 
 <script src='https://d3js.org/d3.v4.js'></script>
 
 <style> 
 
 circle {fill: lightblue; stroke: black;} 
-
-div.tooltip {	
-    position: absolute;			
-    text-align: center;			
-    width: 60px;					
-    height: 28px;					
-    padding: 2px;				
-    font: 12px sans-serif;		
-    background: lightsteelblue;	
-    border: 0px;		
-    border-radius: 8px;			
-    pointer-events: none;			
-}
 
 </style>
 
@@ -29,6 +18,7 @@ div.tooltip {
 <input type="button" value="On to Diesel" onclick="location.href='page2.html'"
 style=" margin-left:150px;"
 />
+<h1 align="center" style="color:blue">Gasoline</h1>
 </div>
 
 <svg width=600 height=600>
@@ -36,10 +26,6 @@ style=" margin-left:150px;"
 
 <script>
 
-// Define the div for the tooltip
-var div = d3.select("body").append("div")	
-    .attr("class", "tooltip")				
-    .style("opacity", 0);
 	
 d3.csv("https://flunky.github.io/cars2017.csv", function(data)
 {
